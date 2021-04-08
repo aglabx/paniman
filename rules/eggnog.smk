@@ -1,20 +1,24 @@
 rule eggnog:
-    conda:
-        "../envs/eggnog.yaml"
-    threads:
-        60
     input:
-        pep_file = "/media/eternus1/nfs/projects/shared/transcriptome_pipeline/data/eggnog/Trinity.fasta.transdecoder.pep"
+        proteins_file = rules.braker.output.braker_out_aa 
+    conda:
+        envs.eggnog
+    threads:
+        workflow.cores
     output:
-        eggnog_output = "/home/pchesnokova/eggnog_snakemake/emapp_trinity_pep.emapper.annotations"
+        eggnog_out_annotation = config["eggnog_out_annotation"], 
+        eggnog_out_orthologs = config["eggnog_out_orthologs"],
     params:
-        eggnog_db = "/mnt/projects/databases/eggnog_db/"
+        eggnog_db = locals.eggnog_db,
+        eggnog_prefix = config["prefix"],
+        eggnog_dir = config["eggnog_dir"]
     shell:
         """
         emapper.py \
-                    -i {input.pep_file} \
-                    --data_dir {params.eggnog_db} \
-                    --output {output.eggnog_output} \ 
-                    -m diamond \
-                    --cpu {threads}
+          --data_dir {params.eggnog_db} \
+          -i {input.proteins_file} \
+          -m diamond \
+          --cpu {threads} \
+          --output {params.eggnog_prefix} \
+          --output_dir {params.eggnog_dir}
         """
