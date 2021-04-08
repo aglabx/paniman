@@ -1,4 +1,5 @@
 channels:
 - bioconda 
 dependencies:
-- braker2 
+- braker2=2.1.6
+- perl-hash-merge
