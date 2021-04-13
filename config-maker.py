@@ -11,7 +11,7 @@ import os
 import os.path
 from inspect import getsourcefile
 
-def main(assembly_fasta, forward_read, reverse_read, faa, outdir, mode):
+def main(assembly_fasta,  outdir, mode, forward_read, reverse_read, faa):
     ''' Function description.
     '''
     pass
@@ -44,7 +44,7 @@ bedtools_softmasked_fasta: "{outdir}/bedtools/{prefix}_softmasked.fasta"
 #star
 star_dir: "{outdir}/star"
 star_index: "{outdir}/star/Genome"
-alignment_sam_raw: "{outdir}/Aligned.out.sam"
+alignment_sam_raw: "{outdir}/star/Aligned.out.sam"
 alignment_sam: "{outdir}/star/{prefix}_aligned.sam"
 alignment_bam: "{outdir}/star/{prefix}_aligned.bam"
 #braker
@@ -70,8 +70,17 @@ eggnog_out_orthologs: "{outdir}/eggnog/{prefix}.emapper.seed_orthologs"
     if faa:
         faa_file = os.path.abspath(faa)
         config += f'\nfaa_proteins: "{faa}"'
-        
     
+    if mode == "fasta":
+        braker_file = os.path.join(execution_folder,"rules/braker_fasta.smk")
+    elif mode == "fasta_rna":
+        braker_file = os.path.join(execution_folder,"rules/braker_rna.smk")    
+    elif mode == "fasta_faa":
+        braker_file = os.path.join(execution_folder,"rules/braker_faa.smk") 
+    elif mode == "fasta_rna_faa":
+        braker_file = os.path.join(execution_folder,"rules/braker_rna_faa.smk")
+    
+    config += f'\nbraker_mode: "{braker_file}"'
     
     with open(config_file, "w") as fw:
         fw.write(config)
@@ -81,10 +90,10 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='Program description.')
     parser.add_argument('-a', '--assembly', help='path to assembly fasta file', required=True)
-    parser.add_argument('-o', '--outdir', help='path to output directory for config.yaml', required=True)
-    parser.add_argument('-f', '--forward_read', help='path to forward read rna-seq file', required=True)
-    parser.add_argument('-r', '--reverse_read', help='path to reverse read rna-seq file', required=True)
-    parser.add_argument('-p', '--proteins_fasta', help='path to proteins fasta file', required=True)
+    parser.add_argument('-o', '--outdir', help='path to output directory for config.yaml', required=True, default="")
+    parser.add_argument('-f', '--forward_read', help='path to forward read rna-seq file', required=False, default="")
+    parser.add_argument('-r', '--reverse_read', help='path to reverse read rna-seq file', required=False, default="")
+    parser.add_argument('-p', '--proteins_fasta', help='path to proteins fasta file', required=False, default="")
     parser.add_argument('-m', '--mode', help='mode to run pipeline', required=True)
     args = vars(parser.parse_args())
     
@@ -95,4 +104,4 @@ if __name__ == '__main__':
     faa = args["proteins_fasta"]
     mode = args["mode"]
     
-    main(assembly_fasta, forward_read, reverse_read, faa, outdir, mode)
+    main(assembly_fasta, outdir, mode, forward_read, reverse_read, faa)
