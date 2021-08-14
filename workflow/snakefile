@@ -30,6 +30,6 @@ include: "../rules/star.smk"
 
 include: "../rules/samtools.smk"
 
-include: "../rules/braker_rna_faa.smk"
+include: config["braker_mode"]
 
 include: "../rules/eggnog.smk"
