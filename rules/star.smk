@@ -33,24 +33,24 @@ rule star_align:
         star_dir = directory(config["star_dir"])
     shell:
         """
+        cd {params.star_dir}
+        
         STAR \
         --genomeDir {params.star_dir} \
+        --readFilesCommand gunzip -c \
         --readFilesIn {input.rna_forward_read} {input.rna_reverse_read} \
         --runThreadN {threads}
         """
 
 
-rule move_star:
+rule rename_star:
     input:
         raw_sam = rules.star_align.output.alignment_sam,
     output:
         alignment_sam = config["alignment_sam"]
     params:
-        outdir = config["outdir"],
         star_dir = directory(config["star_dir"])
     shell:
         """        
         mv {input.raw_sam} {output.alignment_sam}
-        
-        mv {params.outdir}/*out* {params.star_dir}
         """
