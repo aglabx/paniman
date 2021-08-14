@@ -18,8 +18,8 @@ def main(assembly_fasta,  outdir, mode, forward_read, reverse_read, faa):
     execution_folder = os.path.dirname(os.path.abspath(getsourcefile(lambda: 0)))
     config_file = f"{execution_folder}/config/config.yaml"
     
-    
-    prefix = os.path.basename(assembly_fasta).replace(".fasta", "")
+    assembly_extention = "." + os.path.basename(assembly_fasta).split(".")[-1]
+    prefix = os.path.basename(assembly_fasta).replace(assembly_extention, "")
     assembly_file_dir = os.path.dirname(assembly_fasta)
     
     config = f"""
@@ -35,7 +35,7 @@ db_prefix: "{assembly_file_dir}/{prefix}"
 rm_buildb_output: "{assembly_file_dir}/{prefix}.translation"
 
 repeatmodeler_families: "{assembly_file_dir}/{prefix}-families.fa"
-repeatmasker_gff: "{outdir}/repeatmasker/{prefix}.fasta.out.gff"
+repeatmasker_gff: "{outdir}/repeatmasker/{prefix}{assembly_extention}.out.gff"
 
 #bedtools
 bedtools_dir: "{outdir}/bedtools"
@@ -51,6 +51,8 @@ alignment_bam: "{outdir}/star/{prefix}_aligned.bam"
 braker_dir: "{outdir}/braker"
 braker_aa: "{outdir}/braker/augustus.hints.aa"
 braker_gtf: "{outdir}/braker/augustus.hints.gtf"
+braker_aa_fasta: "{outdir}/braker/augustus.ab_initio.aa"
+braker_gtf_fasta: "{outdir}/braker/augustus.ab_initio.gtf"
 
 #eggnog
 eggnog_dir: "{outdir}/eggnog/"
