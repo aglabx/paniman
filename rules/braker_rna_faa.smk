@@ -26,7 +26,6 @@ rule braker:
         braker.pl \
            --verbosity 4 \
            --min_contig=10000 \
-           --useexisting \
            --etpmode \
            --softmasking \
            --cores={threads} \
