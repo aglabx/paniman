@@ -1,6 +1,6 @@
 rule samtools:
     input:
-        sam_1 = rules.move_star.output.alignment_sam
+        sam_1 = rules.rename_star.output.alignment_sam
     conda:
         envs.samtools
     threads: workflow.cores
