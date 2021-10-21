@@ -9,24 +9,24 @@ PANIMAN is available in conda, to install and set is use following commands:
    You can download it or set your own one if you have it already. Use `paniman_download_db` tool to set or download databases. Examples:
    ```
    # Download EggNOG db
-   pannopi_download_db -o /path/to/database/directory
+   paniman_download_db -o /path/to/database/directory
    
    # Set your EggNOG db
-   pannopi_download_db -e /path/to/eggnog/database
+   paniman_download_db -e /path/to/eggnog/database
    ```
 4) To run PANIMAN on your reads use one of the following commands:
    ```
    # If you have only assembly
-   pannopi -m fasta -a /path/to/assembly.fasta -t 32 -o /path/to/outdir
+   paniman -m fasta -a /path/to/assembly.fasta -t 32 -o /path/to/outdir
 
    # If you have assembly and closest reference proteins
-   pannopi -m fasta_faa -a /path/to/assembly.fasta -f /path/to/proteins.fasta -t 32 -o /path/to/outdir
+   paniman -m fasta_faa -a /path/to/assembly.fasta -f /path/to/proteins.fasta -t 32 -o /path/to/outdir
 
    # If you have assembly and RNA-seq reads
-   pannopi -m fasta_rna -a /path/to/assembly.fasta -1 /path/to/forward_read_1.fastq -2 /path/to/reverse_read_2.fastq -t 32 -o /path/to/outdir
+   paniman -m fasta_rna -a /path/to/assembly.fasta -1 /path/to/forward_read_1.fastq -2 /path/to/reverse_read_2.fastq -t 32 -o /path/to/outdir
 
    # If you have assembly, closest reference proteins and RNA-seq data 
-   pannopi -m fasta_rna_faa -a /path/to/assembly.fasta -f /path/to/proteins.fasta -1 /path/to/forward_read_1.fastq -2 /path/to/reverse_read_2.fastq -t 32 -o /path/to/outdir
+   paniman -m fasta_rna_faa -a /path/to/assembly.fasta -f /path/to/proteins.fasta -1 /path/to/forward_read_1.fastq -2 /path/to/reverse_read_2.fastq -t 32 -o /path/to/outdir
    ```
 
 ## Modes
