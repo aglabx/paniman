@@ -11,7 +11,7 @@ import os
 import os.path
 from inspect import getsourcefile
 
-def main(assembly_fasta,  outdir, mode, forward_read, reverse_read, faa):
+def main(assembly_fasta,  outdir, mode, forward_read, reverse_read, faa, softmasked):
     ''' Function description.
     '''
     pass
@@ -47,6 +47,11 @@ star_index: "{outdir}/star/Genome"
 alignment_sam_raw: "{outdir}/star/Aligned.out.sam"
 alignment_sam: "{outdir}/star/{prefix}_aligned.sam"
 alignment_bam: "{outdir}/star/{prefix}_aligned.bam"
+
+#hisat 
+
+hisat_index: "{assembly_file_dir}/{prefix}.1.ht2l"
+hisat_dir: "{outdir}/hisat"
 #braker
 braker_dir: "{outdir}/braker"
 braker_aa: "{outdir}/braker/augustus.hints.aa"
@@ -59,10 +64,8 @@ eggnog_dir: "{outdir}/eggnog/"
 
 eggnog_out_annotation: "{outdir}/eggnog/{prefix}.emapper.annotations"
 eggnog_out_orthologs: "{outdir}/eggnog/{prefix}.emapper.seed_orthologs"
-
-
     """
-    
+
     if forward_read and reverse_read:
         forward_read = os.path.abspath(forward_read)
         reverse_read = os.path.abspath(reverse_read)
@@ -72,7 +75,8 @@ eggnog_out_orthologs: "{outdir}/eggnog/{prefix}.emapper.seed_orthologs"
     if faa:
         faa_file = os.path.abspath(faa)
         config += f'\nfaa_proteins: "{faa}"'
-    
+    if softmasked:
+        config += f'\nsoftmasked_genome: "{assembly_fasta}"'
     if mode == "fasta":
         braker_file = os.path.join(execution_folder,"rules/braker_fasta.smk")
     elif mode == "fasta_rna":
@@ -96,6 +100,7 @@ if __name__ == '__main__':
     parser.add_argument('-f', '--forward_read', help='path to forward read rna-seq file', required=False, default="")
     parser.add_argument('-r', '--reverse_read', help='path to reverse read rna-seq file', required=False, default="")
     parser.add_argument('-p', '--proteins_fasta', help='path to proteins fasta file', required=False, default="")
+    parser.add_argument('-s', '--softmasked', help='path to proteins fasta file', action='store_true')
     parser.add_argument('-m', '--mode', help='mode to run pipeline', required=True)
     args = vars(parser.parse_args())
     
@@ -104,6 +109,7 @@ if __name__ == '__main__':
     forward_read =  args["forward_read"]
     reverse_read = args["reverse_read"]
     faa = args["proteins_fasta"]
+    softmasked = args["softmasked"]
     mode = args["mode"]
     
-    main(assembly_fasta, outdir, mode, forward_read, reverse_read, faa)
+    main(assembly_fasta, outdir, mode, forward_read, reverse_read, faa, softmasked)
