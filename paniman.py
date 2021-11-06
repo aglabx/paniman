@@ -12,7 +12,7 @@ import os.path
 from inspect import getsourcefile
     
 
-def main(assembly_fasta, fr, rr, faa, outdir, threads, mode, execution_folder, snake_debug):
+def main(assembly_fasta, fr, rr, faa, outdir, threads, mode, execution_folder, snake_debug, softmasked):
     ''' Function description.
     '''
         
@@ -22,7 +22,7 @@ def main(assembly_fasta, fr, rr, faa, outdir, threads, mode, execution_folder, s
         snake_debug = ""
 
     #Config-maker
-    command = f"python {execution_folder}/config-maker.py -a {assembly_fasta} -o {outdir} -f {fr} -r {rr} -p {faa} -m {mode}"
+    command = f"python {execution_folder}/config-maker.py -a {assembly_fasta} -o {outdir} -f {fr} -r {rr} -p {faa} -m {mode} -s {softmasked}"
     print(command)
     os.system(command)
     #Snakemake
@@ -42,6 +42,7 @@ if __name__ == '__main__':
     parser.add_argument('-f','--faa', 
                         help="path to protein fasta file (.faa), required for fasta_faa and fasta_rna_faa modes",
                         default="0")
+    parser.add_argument("-s", "--softmasked", help="use if your genome is already softmasked", default=False, action='store_true')
     parser.add_argument('-o','--outdir', help='output directory [default is folder of your assembly file]', default=False)
     parser.add_argument('-t','--threads', help='number of threads [default == 8]', default = "8")
     parser.add_argument('-d','--debug', help='debug mode', action='store_true')
@@ -53,6 +54,7 @@ if __name__ == '__main__':
     mode = args["mode"]
     forward_rna_read = args["forward_rna_read"]
     reverse_rna_read = args["reverse_rna_read"]
+    softmasked = args["softmasked"]
     faa_file = args["faa"]
     
     outdir = args["outdir"]
@@ -62,7 +64,12 @@ if __name__ == '__main__':
         outdir = os.path.abspath(outdir)
     
     execution_folder = os.path.dirname(os.path.abspath(getsourcefile(lambda: 0)))
-        
+
+    if softmasked:
+        softmasked = "-s"
+    else:
+        softmasked = ""
+
     if mode == "fasta_rna":
         if forward_rna_read == "0" or reverse_rna_read == "0":
             parser.error("\nfasta_rna mode requires -1 {path_to_forward_read} and -2 {path_to_reverse_read}!")
@@ -84,4 +91,4 @@ if __name__ == '__main__':
             forward_rna_read = os.path.abspath(forward_rna_read)
             reverse_rna_read = os.path.abspath(reverse_rna_read)
      
-    main(assembly_fasta, forward_rna_read, reverse_rna_read, faa_file, outdir, threads, mode, execution_folder, debug)
+    main(assembly_fasta, forward_rna_read, reverse_rna_read, faa_file, outdir, threads, mode, execution_folder, debug, softmasked)
