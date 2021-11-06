@@ -6,7 +6,7 @@ rule locals:
     params:
         ninja_path = "/home/dzilov/data_zilov/soft/NINJA-0.97-cluster_only/NINJA",
         prothint_path = "/media/eternus1/projects/zilov/soft/ProtHint-2.6.0/bin",
-        eggnog_db = "/mnt/projects/databases/eggnog_db",
+        eggnog_db = "/media/eternus1/nfs/projects/shared/databases/eggnog_database_212",
         genemark_path = "/media/eternus1/projects/zilov/soft/gmes_linux_64",
         
 locals = rules.locals.params
@@ -19,16 +19,15 @@ rule envs:
         star = "../envs/star.yaml",
         eggnog = "../envs/eggnog.yaml",
         samtools = "../envs/samtools.yaml",
+        hisat2 = "../envs/hisat2.yaml"
       
 envs = rules.envs.params
 
-include: "../rules/repeatmasker.smk"
+if not config["softmasked_genome"]:
+    include: "../rules/repeatmasker.smk"
+    include: "../rules/bedtools.smk"
 
-include: "../rules/bedtools.smk"
-
-include: "../rules/star.smk"
-
-include: "../rules/samtools.smk"
+include: "../rules/hisat.smk"
 
 include: config["braker_mode"]
 
