@@ -1,11 +1,11 @@
 rule braker:
     input:
-        braker_in_fasta = rules.bedtools.output.softmasked_fasta,
-        braker_in_bam = rules.samtools.output.bam,
+        braker_in_fasta = config["softmasked_genome"],
+        braker_in_bam = rules.hisat2_align.output,
         braker_in_faa = config["faa_proteins"]
     conda:
         envs.braker
-    threads: workflow.cores
+    threads: min(workflow.cores, 48)
     output:
         braker_out_aa = config["braker_aa"],
         braker_out_gtf = config["braker_gtf"]

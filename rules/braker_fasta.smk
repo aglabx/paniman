@@ -1,9 +1,12 @@
 rule braker:
     input:
-        braker_in_fasta = rules.bedtools.output.softmasked_fasta,
+        if config["softmasked_genome"]:
+            braker_in_fasta = config["softmasked_genome"]
+        else:
+            braker_in_fasta = rules.bedtools.output.softmasked_fasta,
     conda:
         envs.braker
-    threads: workflow.cores
+    threads: min(48, workflow.cores)
     output:
         braker_out_aa = config["braker_aa_fasta"],
         braker_out_gtf = config["braker_gtf_fasta"]
