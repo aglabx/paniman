@@ -1,19 +1,19 @@
 rule braker:
     input:
-        braker_in_fasta = config["softmasked_genome"],
-        braker_in_bam = rules.hisat2_align.output,
-        braker_in_faa = config["faa_proteins"]
+        braker_in_fasta = GENOME,
+        braker_in_bam = SORTED_BAM,
+        braker_in_faa = PROTEINS,
     conda:
         envs.braker
     threads: min(workflow.cores, 48)
     output:
-        braker_out_aa = config["braker_aa"],
-        braker_out_gtf = config["braker_gtf"]
+        braker_out_aa = f"{OUTDIR}/braker/augustus.hints.aa",
+        braker_out_gtf = f"{OUTDIR}/braker/augustus.hints.gtf",
     params:
-        prefix = config["prefix"],
+        prefix = PREFIX,
         genemark_path = locals.genemark_path,
         prothint_path = locals.prothint_path,
-        output_dir = directory(config["outdir"])
+        output_dir = directory(OUTDIR)
     shell:
         """
         cd {params.genemark_path}

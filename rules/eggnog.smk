@@ -6,12 +6,12 @@ rule eggnog:
     threads:
         workflow.cores
     output:
-        eggnog_out_annotation = config["eggnog_out_annotation"], 
-        eggnog_out_orthologs = config["eggnog_out_orthologs"],
+        eggnog_out_annotation = f"{OUTDIR}/eggnog/{PREFIX}.emapper.annotations", 
+        eggnog_out_orthologs = f"{OUTDIR}/eggnog/{PREFIX}.emapper.seed_orthologs",
     params:
         eggnog_db = locals.eggnog_db,
-        eggnog_prefix = config["prefix"],
-        eggnog_dir = config["eggnog_dir"]
+        eggnog_prefix = PREFIX,
+        eggnog_dir = f"{OUTDIR}/eggnog",
     shell:
         """
         emapper.py \
