@@ -1,14 +1,14 @@
 rule star_index:
     input:
-        softmasked_fasta = rules.bedtools.output.softmasked_fasta,
+        softmasked_fasta = GENOME,
     conda:
         envs.star
     threads: 
         workflow.cores
     output:
-        star_index = config["star_index"]
+        star_index = f"{OUTDIR}/star/Genome"
     params:
-        star_dir = directory(config["star_dir"])
+        star_dir = directory(f"{OUTDIR}/star"),
     shell:
         """
         STAR \
@@ -21,16 +21,17 @@ rule star_index:
 rule star_align:
     input:
         assembly_index = rules.star_index.output.star_index,
-        rna_forward_read = config["forward_rna_read"],
-        rna_reverse_read = config["reverse_rna_read"]
+        rna_forward_read = FORWARD_READ,
+        rna_reverse_read = REVERSE_READ,
     conda:
         envs.star
     threads: 
         workflow.cores
     output:
-        alignment_sam = config["alignment_sam_raw"]
+        sorted_alignment = f"{OUTDIR}/star/{PREFIX}_sorted_rna_alignment.bam"
     params:
-        star_dir = directory(config["star_dir"])
+        star_dir = directory(f"{OUTDIR}/star"),
+        alignment_bam_raw = f"{OUTDIR}/star/Aligned.sortedByCoord.out.bam"
     shell:
         """
         cd {params.star_dir}
@@ -39,18 +40,10 @@ rule star_align:
         --genomeDir {params.star_dir} \
         --readFilesCommand gunzip -c \
         --readFilesIn {input.rna_forward_read} {input.rna_reverse_read} \
+        --outSAMtype BAM SortedByCoordinate
         --runThreadN {threads}
+
+        mv {params.alignment_bam_raw} {output.sorted_alignment}
         """
 
-
-rule rename_star:
-    input:
-        raw_sam = rules.star_align.output.alignment_sam,
-    output:
-        alignment_sam = config["alignment_sam"]
-    params:
-        star_dir = directory(config["star_dir"])
-    shell:
-        """        
-        mv {input.raw_sam} {output.alignment_sam}
-        """
+SORTED_BAM = rules.star_align.output.sorted_alignment

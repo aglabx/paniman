@@ -1,12 +1,36 @@
+from pathlib import Path, PurePath
+
+# read config
+
+OUTDIR = config["outdir"]
+GENOME = config["genome"]
+FORWARD_READ = config["forward_read"]
+REVERSE_READ = config["reverse_read"]
+PROTEINS = config["proteins"]
+MODE = config["mode"]
+ALIGNER = config["aligner"]
+SOFTMASKED = config["softmasked"]
+THREADS = ["threads"]
+
+PREFIX = PurePath(GENOME).stem
+
+## create symlink to genome to not create index files in genome folder
+
+if not Path(f"{OUTDIR}/genome").exists():
+    Path(f"{OUTDIR}/genome").mkdir()
+if not Path(f"{OUTDIR}/genome/{PREFIX}.fasta").exists():
+    Path(f"{OUTDIR}/genome/{PREFIX}.fasta").symlink_to(GENOME)
+GENOME = f"{OUTDIR}/genome/{PREFIX}.fasta"
+
 rule all:
     input:
-        config["eggnog_out_annotation"]
+        f"{OUTDIR}/eggnog/{PREFIX}.emapper.annotations"
         
 rule locals:
     params:
         ninja_path = "/home/dzilov/data_zilov/soft/NINJA-0.97-cluster_only/NINJA",
         prothint_path = "/media/eternus1/projects/zilov/soft/ProtHint-2.6.0/bin",
-        eggnog_db = "/mnt/projects/databases/eggnog_db",
+        eggnog_db = "/media/eternus1/nfs/projects/shared/databases/eggnog_database_212",
         genemark_path = "/media/eternus1/projects/zilov/soft/gmes_linux_64",
         
 locals = rules.locals.params
@@ -19,16 +43,21 @@ rule envs:
         star = "../envs/star.yaml",
         eggnog = "../envs/eggnog.yaml",
         samtools = "../envs/samtools.yaml",
+        hisat2 = "../envs/hisat2.yaml"
       
 envs = rules.envs.params
 
-include: "../rules/repeatmasker.smk"
+if not SOFTMASKED:
+    include: "../rules/repeatmasker.smk"
+    include: "../rules/bedtools.smk"
+    GENOME = rules.bedtools.output.softmasked_fasta
 
-include: "../rules/bedtools.smk"
-
-include: "../rules/star.smk"
-
-include: "../rules/samtools.smk"
+if ALIGNER == "hisat":
+    include: "../rules/hisat.smk"
+    SORTED_BAM = rules.hisat_sort_alignment.output.sorted_alignment
+elif ALIGNER == "star":
+    include: "../rules/star.smk"
+    SORTED_BAM = rules.star_align.output.sorted_alignment
 
 include: config["braker_mode"]
 

@@ -3,11 +3,11 @@ rule rmbuildb:
         envs.repeatmodeler
     threads: workflow.cores
     input:
-        assembly_fasta = config["assembly_fasta"]
+        assembly_fasta = GENOME
     output:
-        database_translation = config["rm_buildb_output"]
+        database_translation = f"{OUTDIR}/genome/{prefix}.translation"
     params:
-        db_prefix = config["db_prefix"]
+        db_prefix = f"{OUTDIR}/genome/{PREFIX}"
     shell:
         """
         BuildDatabase -name {params.db_prefix} {input.assembly_fasta}
@@ -22,9 +22,9 @@ rule repeatmodeler:
     input:
         database = rules.rmbuildb.output.database_translation
     output:
-        rm_families = config["repeatmodeler_families"]
+        rm_families = f"{OUTDIR}/genome/{prefix}-families.fa"
     params:
-        database_prefix = config["db_prefix"],
+        database_prefix = f"{OUTDIR}/genome/{PREFIX}",
         ninja_dir = locals.ninja_path
     shell:
         """
@@ -42,12 +42,12 @@ rule repeatmasker:
     threads:
         workflow.cores
     input:
-        assembly = config["assembly_fasta"],
+        assembly = GENOME,
         rm_families = rules.repeatmodeler.output.rm_families
     output:
-        repeatmasker_gff = config["repeatmasker_gff"]
+        repeatmasker_gff = f"{OUTDIR}/repeatmasker/{PREFIX}.fasta.out.gff"
     params:
-        rm_dir = directory(config["repeatmasker_dir"])
+        rm_dir = directory(f"{OUTDIR}/repeatmasker/")
     shell:
         """
         RepeatMasker \

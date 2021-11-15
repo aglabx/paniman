@@ -1,17 +1,17 @@
 rule braker:
     input:
-        braker_in_fasta = rules.bedtools.output.softmasked_fasta,
+        braker_in_fasta = GENOME,
     conda:
         envs.braker
-    threads: workflow.cores
+    threads: min(48, workflow.cores)
     output:
-        braker_out_aa = config["braker_aa_fasta"],
-        braker_out_gtf = config["braker_gtf_fasta"]
+        braker_out_aa = f"{OUTDIR}/braker/augustus.ab_initio.aa",
+        braker_out_gtf = f"{OUTDIR}/braker/augustus.ab_initio.gtf",
     params:
-        prefix = config["prefix"],
+        prefix = PREFIX,
         genemark_path = locals.genemark_path,
         prothint_path = locals.prothint_path,
-        output_dir = directory(config["outdir"])
+        output_dir = directory(OUTDIR)
     shell:
         """
         cd {params.genemark_path}
