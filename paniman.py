@@ -26,6 +26,11 @@ def config_maker(settings, config_file):
     "threads" : "{settings["threads"]}"
     "braker_mode": "{settings["braker_mode"]}"
     """
+
+    if not os.path.exists(os.path.dirname(config_file)):
+        os.mkdir(os.path.dirname(config_file))
+
+
     with open(config_file, "w") as fw:
         fw.write(config)
         print(f"CONFIG IS CREATED! {config_file}")
