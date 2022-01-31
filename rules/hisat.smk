@@ -3,7 +3,6 @@ rule hisat2_index:
         genome = GENOME
     conda:
         envs.hisat2
-    threads: workflow.cores
     output:
         index_file = f"{OUTDIR}/genome/{PREFIX}.1.ht2l"
     params:

@@ -1,4 +1,6 @@
 channels:
-- bioconda 
+- bioconda
+- conda-forge
+- defaults 
 dependencies:
 - repeatmodeler 
