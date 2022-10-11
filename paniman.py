@@ -25,6 +25,7 @@ def config_maker(settings, config_file):
     "softmasked" : "{settings["softmasked"]}"
     "threads" : "{settings["threads"]}"
     "braker_mode": "{settings["braker_mode"]}"
+    "busco_lineage": "{settings["busco_lineage"]}"
     """
     with open(config_file, "w") as fw:
         fw.write(config)
@@ -62,7 +63,10 @@ if __name__ == '__main__':
     parser.add_argument('-f','--faa', 
                         help="path to protein fasta file (.faa), required for fasta_faa and fasta_rna_faa modes",
                         default="")
-    parser.add_argument("-s", "--softmasked", help="use if your genome is already softmasked", default=False, action='store_true')
+    parser.add_argument("-s", "--softmasked", help="use if your genome is already softmasked", default=0, action='store_true')
+    parser.add_argument('-b','--busco_lineage', 
+                        help="path to busco lineage database",
+                        default="")
     parser.add_argument('-o','--outdir', help='output directory', required=True)
     parser.add_argument('-t','--threads', help='number of threads [default == 8]', default = "8")
     parser.add_argument('-d','--debug', help='debug mode', action='store_true')
@@ -75,10 +79,14 @@ if __name__ == '__main__':
     forward_rna_read = args["forward_rna_read"]
     reverse_rna_read = args["reverse_rna_read"]
     softmasked = args["softmasked"]
+    busco_lineage = args["busco_lineage"]
     faa_file = args["faa"]
     aligner = args["aligner"]
     outdir = os.path.abspath(args["outdir"])
     
+    
+    if softmasked:
+        softmasked = 1
     execution_folder = os.path.dirname(os.path.abspath(getsourcefile(lambda: 0)))
     execution_time = datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
     random_letters = "".join([random.choice(string.ascii_letters) for n in range(3)])
@@ -124,6 +132,7 @@ if __name__ == '__main__':
         "aligner" : aligner,
         "config_file" : config_file,
         "braker_mode" : braker_file,
+        "busco_lineage" : busco_lineage,
     }
     
     config_maker(settings, config_file)
