@@ -5,7 +5,7 @@ rule rmbuildb:
     input:
         assembly_fasta = GENOME
     output:
-        database_translation = f"{OUTDIR}/genome/{prefix}.translation"
+        database_translation = f"{OUTDIR}/genome/{PREFIX}.translation"
     params:
         db_prefix = f"{OUTDIR}/genome/{PREFIX}"
     shell:
@@ -22,7 +22,7 @@ rule repeatmodeler:
     input:
         database = rules.rmbuildb.output.database_translation
     output:
-        rm_families = f"{OUTDIR}/genome/{prefix}-families.fa"
+        rm_families = f"{OUTDIR}/genome/{PREFIX}-families.fa"
     params:
         database_prefix = f"{OUTDIR}/genome/{PREFIX}",
         ninja_dir = locals.ninja_path
