@@ -5,7 +5,7 @@ rule hisat2_index:
         envs.hisat2
     threads: workflow.cores
     output:
-        index_file = f"{OUTDIR}/genome/{PREFIX}.1.ht2l"
+        index_file = f"{GENOME_DIR}/{PREFIX}.1.ht2"
     params:
         outdir = directory(f"{OUTDIR}/hisat"),
         prefix = PREFIX
