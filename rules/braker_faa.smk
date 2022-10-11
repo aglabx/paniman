@@ -24,8 +24,9 @@ rule braker:
         cd {params.output_dir}
         braker.pl \
            --verbosity 4 \
-           --min_contig=10000 \
-           --epmode \
+           --min_contig=1000 \
+           --prg gth \
+           --trainFromGth \
            --softmasking \
            --cores={threads} \
            --gff3 \
