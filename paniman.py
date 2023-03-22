@@ -12,39 +12,41 @@ from inspect import getsourcefile
 from datetime import datetime
 import string
 import random
+import yaml
+import logging
+
 
 def config_maker(settings, config_file):
-    config = f"""
-    "outdir" : "{settings["outdir"]}"
-    "genome" : "{settings["assembly_fasta"]}"
-    "forward_read" : "{settings["fr"]}"
-    "reverse_read" : "{settings["rr"]}"
-    "proteins" : "{settings["faa"]}"
-    "mode" : "{settings["mode"]}"
-    "aligner" : "{settings["aligner"]}"
-    "softmasked" : "{settings["softmasked"]}"
-    "threads" : "{settings["threads"]}"
-    "braker_mode": "{settings["braker_mode"]}"
-    "busco_lineage": "{settings["busco_lineage"]}"
-    """
+    config = {
+        "outdir": settings["outdir"],
+        "genome": settings["assembly_fasta"],
+        "forward_read": settings["fr"],
+        "reverse_read": settings["rr"],
+        "proteins": settings["faa"],
+        "mode": settings["mode"],
+        "aligner": settings["aligner"],
+        "softmasked": settings["softmasked"],
+        "threads": settings["threads"],
+        "braker_mode": settings["braker_mode"],
+        "busco_lineage": settings["busco_lineage"],
+    }
 
     if not os.path.exists(os.path.dirname(config_file)):
         os.mkdir(os.path.dirname(config_file))
 
-
     with open(config_file, "w") as fw:
-        fw.write(config)
-        print(f"CONFIG IS CREATED! {config_file}")
+        yaml.dump(config, fw)
+        logging.info(f"CONFIG IS CREATED! {config_file}")
       
 
 def main(settings):
     ''' Function description.
     '''
         
+    snake_debug = ""
     if settings["debug"]:
         snake_debug = "-n"
-    else:
-        snake_debug = ""
+        
 
     #Snakemake
     command = f"""

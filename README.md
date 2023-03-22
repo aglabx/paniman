@@ -3,7 +3,7 @@
 ![alt text](./markdown/paniman_workflow.jpg)
 ## Install, set and run
 PANIMAN is available in conda, to install and set is use following commands:
-1) Download PANIMAN in separate conda environment: `conda create -n paniman -c conda-forge -c bioconda -c aglab paniman`
+1) Download PANIMAN in separate conda environment: `conda create -n paniman -c conda-forge -c bioconda -c aglab paniman pyyaml`
 2) Activate the environment: `conda activate paniman`
 3) EggNOG-mapper database (~50GB) is required to run PANIMAN. 
    You can download it or set your own one if you have it already. Use `paniman_download_db` tool to set or download databases. Examples:
